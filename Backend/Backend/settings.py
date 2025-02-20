@@ -68,6 +68,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Backend.urls'
 
+WSGI_APPLICATION = "Backend.wsgi.application"
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
