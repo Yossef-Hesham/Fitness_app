@@ -6,7 +6,7 @@ from django.db import transaction
 class ProfileInputSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['DateOfbirth', 'Is_coach', 'Weight', 'Cardio_type']
+        fields = ['DateOfbirth', 'Is_coach','picture', 'Weight', 'Cardio_type']
 
 class ProfileOutputSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
@@ -47,7 +47,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
                 user=user,
                 DateOfbirth=profile_data.get('DateOfbirth'),
                 Is_coach=profile_data.get('Is_coach', False),
-                # picture=profile_data.get('picture'),
+                picture=profile_data.get('picture'),
                 Weight=profile_data.get('Weight'),
                 Cardio_type=profile_data.get('Cardio_type'),
                 Age=profile_data.get('Age'),

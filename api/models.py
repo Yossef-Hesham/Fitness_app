@@ -14,7 +14,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User,default=False, unique=True, on_delete=models.CASCADE)
     DateOfbirth = models.DateField(blank=True, null=True)
     Age = models.FloatField(max_length=2, null=True)
-    # picture = models.ImageField(null=True)
+    picture = models.ImageField(null=True)
     Is_coach = models.BooleanField()
     Weight = models.FloatField(null=True)
     Height = models.FloatField(null=True)
