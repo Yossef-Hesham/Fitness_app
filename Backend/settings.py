@@ -20,7 +20,8 @@ if ENVIRONMENT == 'development':
 else :
     DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://fitnessapp-production-cf6d.up.railway.app/']
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'fitnessapp-production-cf6d.up.railway.app']
 
 CORS_ALLOWED_ORIGINS = [
     'https://fitnessapp-production-cf6d.up.railway.app',
