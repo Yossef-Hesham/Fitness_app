@@ -2,29 +2,26 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 
-from django.db import models
-from django.contrib.auth.models import User
-
 class Profile(models.Model):
     
-    class SportType(models.TextChoices):
-        TREADMILL = 'Trademill', 'Treadmill'
-        STAIRMASTER = 'stairmaster', 'Stairmaster'
-        BOXING = 'boxing', 'Boxing'
-        SWIMMING = 'swimming', 'Swimming'
+    class Sport_type(models.TextChoices):
+        Trademill = 'Trademill'
+        stairmaster = 'stairmaster'
+        boxing = 'boxing'
+        swimming = 'swimming'
+        
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)
-    date_of_birth = models.DateField(blank=True, null=True)
-    age = models.FloatField(null=True)
-    # picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    is_coach = models.BooleanField(default=False)
-    weight = models.FloatField(null=True)
-    height = models.FloatField(null=True)
-    cardio_type = models.CharField(max_length=20, choices=SportType.choices)
-
+    user = models.OneToOneField(User,default=False, unique=True, on_delete=models.CASCADE)
+    DateOfbirth = models.DateField(blank=True, null=True)
+    Age = models.FloatField(max_length=2, null=True)
+    # picture = models.ImageField(null=True)
+    Is_coach = models.BooleanField()
+    Weight = models.FloatField(null=True)
+    Height = models.FloatField(null=True)
+    Cardio_type = models.CharField(max_length=12,choices=Sport_type.choices)
+    
     def __str__(self):
         return self.user.username
-
 
 
 class Exercise(models.Model):
