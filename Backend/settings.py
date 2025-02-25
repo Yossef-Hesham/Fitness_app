@@ -23,14 +23,14 @@ else :
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'https://fitnessapp-production-cf6d.up.railway.app/']
 
 CORS_ALLOWED_ORIGINS = [
-    'https://fitnessapp-production-cf6d.up.railway.app/',
+    'https://fitnessapp-production-cf6d.up.railway.app',
     'http://localhost:3000',
     'http://127.0.0.1:9000'
 ]
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://fitnessapp-production-cf6d.up.railway.app/',
+    'https://fitnessapp-production-cf6d.up.railway.app',
     "http://localhost:3000",
     "http://127.0.0.1:9000",
 ]
