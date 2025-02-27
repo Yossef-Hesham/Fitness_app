@@ -20,9 +20,7 @@ class RegisterView(generics.GenericAPIView):
     
     def post(self, request, *args, **kwargs):
         seralizer = self.get_serializer(data=request.data)
-        if not seralizer.is_valid():
-            return Response(seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
+        
         if seralizer.is_valid():
             user = seralizer.save()
             profile = user.profile
