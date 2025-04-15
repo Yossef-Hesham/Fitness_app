@@ -10,4 +10,6 @@ urlpatterns = [
     path('user/profiles/', ProfileView.as_view({'get':'list'})),
     path('user/register/', RegisterView.as_view()),
     path('user/login/', LoginView.as_view()),
+    path('workout/', WorkoutView.as_view({'get':'list', 'post':'create'})),
+    
 ]

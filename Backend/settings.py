@@ -155,6 +155,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+MEDIA_URL = '/media/'  # URL to access media files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Folder to store uploaded files
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type

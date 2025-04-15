@@ -65,4 +65,8 @@ class LoginView(generics.GenericAPIView):
                 
             
     
+
+class WorkoutView(viewsets.ModelViewSet):
+    queryset = WorkoutDay.objects.all()
+    serializer_class = WorkoutSerializer
     

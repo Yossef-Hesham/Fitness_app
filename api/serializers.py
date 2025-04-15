@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import *
 from django.db import transaction
 
 class ProfileInputSerializer(serializers.ModelSerializer):
@@ -59,3 +59,23 @@ class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
 
+class ExerciseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Exercise
+        fields = '__all__'
+
+
+class WorkoutSerializer(serializers.ModelSerializer):
+    exercise = ExerciseSerializer(source='exercises', many=True)
+
+    class Meta:
+        model = WorkoutDay
+        fields = ['user', 'workout', 'date', 'exercise']  # Added 'workout' instead of typo 'Workout'
+
+    def create(self, validated_data):
+        exercise_data_list = validated_data.pop('exercises')
+        workout = WorkoutDay.objects.create(**validated_data)
+        for data_list in exercise_data_list:
+            Exercise.objects.create(Workout=workout, **data_list)
+        return workout
+    
