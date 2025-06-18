@@ -1,51 +1,109 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator
 
-# Create your models here.
-
-class Profile(models.Model):
+class CustomUser(AbstractUser):
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female')], null=True, blank=True)
+    height_cm = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    current_weight_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     
-    class Sport_type(models.TextChoices):
-        Trademill = 'Trademill'
-        stairmaster = 'stairmaster'
-        boxing = 'boxing'
-        swimming = 'swimming'
-        
-
-    user = models.OneToOneField(User,default=False, unique=True, on_delete=models.CASCADE)
-    DateOfbirth = models.DateField(blank=True, null=True)
-    Age = models.FloatField(max_length=4, null=True)
-    picture = models.ImageField(null=True)
-    Is_coach = models.BooleanField()
-    Weight = models.FloatField(null=True)
-    Height = models.FloatField(null=True)
-    Cardio_type = models.CharField(max_length=12,choices=Sport_type.choices)
     
-    def __str__(self):
-        return self.user.username
+class MuscleGroup(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
-class WorkoutDay(models.Model):
-    class SportType(models.TextChoices):
-        CHEST = 'Push', 'Chest'
-        BACK = 'Back', 'Back'
-        ARM = 'Arm', 'Arm'
-        LEG = 'Leg', 'Leg'
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    workout = models.CharField(max_length=6, choices=SportType.choices)
-    date = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.workout} - {self.date.strftime('%Y-%m-%d')}"
-
+class Equipment(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
 class Exercise(models.Model):
-    Workout = models.ForeignKey(WorkoutDay, on_delete=models.CASCADE, related_name='exercises', null=True)
-    name = models.CharField(max_length=20, null=True, blank=False)
-    weight = models.IntegerField()
-    sets = models.IntegerField()
-    reps = models.IntegerField()
-    persent_failure = models.PositiveSmallIntegerField(validators=[MinValueValidator(2), MaxValueValidator(10)], default=8)
-    def __str__(self):
-        return self.name
+    name = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(blank=True)
+    muscles = models.ManyToManyField(MuscleGroup, related_name='exercises')
+    equipment = models.ManyToManyField(Equipment, related_name='exercises')
+
+
+
+
+class WorkoutPlan(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='workout_plans')
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class PlanExercise(models.Model):
+    plan = models.ForeignKey(WorkoutPlan, on_delete=models.CASCADE, related_name='exercises')
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    sets = models.PositiveIntegerField()
+    reps = models.PositiveIntegerField()
+    weight = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+    order = models.PositiveIntegerField(default=0)
+
+
+
+class WorkoutLog(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='workout_logs')
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField(null=True, blank=True)
+    type = models.CharField(max_length=50, blank=True)
+    calories_burned = models.DecimalField(max_digits=7, decimal_places=2, null=True, blank=True)
+    notes = models.TextField(blank=True)
+
+class WorkoutExerciseLog(models.Model):
+    workout = models.ForeignKey(WorkoutLog, on_delete=models.CASCADE, related_name='exercise_logs')
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    sets_completed = models.PositiveIntegerField()
+    reps_each = models.PositiveIntegerField()
+    weight_used = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
+
+
+class WeightLog(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='weight_logs')
+    log_date = models.DateField()
+    weight_kg = models.DecimalField(max_digits=6, decimal_places=2)
+
+class BodyMeasurement(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='measurements')
+    log_date = models.DateField()
+    chest_cm = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    waist_cm = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    hips_cm = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+
+
+
+class UserStreak(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='streak')
+    current_streak_days = models.PositiveIntegerField(default=0)
+    longest_streak_days = models.PositiveIntegerField(default=0)
+    last_workout_date = models.DateField(null=True, blank=True)
+
+
+
+class WeeklyLeaderboard(models.Model):
+    week_start = models.DateField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='leaderboards')
+    workout_count = models.PositiveIntegerField(default=0)
+    total_volume = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    class Meta:
+        unique_together = ('week_start', 'user')
+
+
+
+
+
+class Achievement(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    type = models.CharField(max_length=50)  # e.g. "WORKOUT_COUNT", "TOTAL_VOLUME"
+    target_value = models.PositiveIntegerField()
+
+class UserAchievement(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='achievements')
+    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
+    unlocked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'achievement')
+
+
+
+

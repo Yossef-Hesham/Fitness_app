@@ -1,48 +1,27 @@
 from pathlib import Path
-from django.conf import ENVIRONMENT_VARIABLE
-from dotenv import load_dotenv
-import environ
 import os
-import dj_database_url
-from decouple import config
-
-# from environ import ENV
-load_dotenv()
-env = environ.Env()
-environ.Env.read_env()
-ENVIRONMENT = env('ENVIRONMENT', default = 'development')
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv("SECRET_KEY")
 
-if ENVIRONMENT == 'development':
-    DEBUG = True
-else :
-    DEBUG = False
+SECRET_KEY = 'django-insecure-g_w4o=#d6%9l34j&rjws4%o#15ebvu)df6@7t1&_*v&!a5$j#l'  # Replace with a secure key in real projects
 
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'fitnessapp-production-cf6d.up.railway.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+AUTH_USER_MODEL = 'api.CustomUser'
+
 
 CORS_ALLOWED_ORIGINS = [
-    'https://fitnessapp-production-cf6d.up.railway.app',
     'http://localhost:3000',
-    'http://127.0.0.1:9000'
+    'http://127.0.0.1:9000',
 ]
 
-
 CSRF_TRUSTED_ORIGINS = [
-    'https://fitnessapp-production-cf6d.up.railway.app',
     "http://localhost:3000",
     "http://127.0.0.1:9000",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-# SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,19 +36,13 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
-
 REST_FRAMEWORK = {
-    # 'DEFAULT_AUTHENTICATION_CLASSES': [
-    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
-    # ],
-    # for documing api
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Enable Whitenoise   
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -79,10 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'Backend.urls'
-
-WSGI_APPLICATION = "Backend.wsgi.application"
 
 TEMPLATES = [
     {
@@ -100,23 +70,15 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = "Backend.wsgi.application"
+
+# ✅ Use SQLite for local development
 DATABASES = {
-'default': dj_database_url.config(
-    default=config('DATABASE_URL', default = os.getenv("DATABASE_URL"))
-)
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
+    }
 }
-
-# POSTGRES_LOCALLY = env('POSTGRES_LOCALLY') == 'True'
-# DATABASE_URL = os.getenv('DATABASE_URL')
-
-# if ENVIRONMENT == 'production' or POSTGRES_LOCALLY:
-#     if DATABASE_URL:
-#         DATABASES['default'] = dj_database_url.parse(DATABASE_URL)
-#     else:
-#         print("Warning: DATABASE_URL not found in environment variables")
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -133,21 +95,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -155,12 +106,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-MEDIA_URL = '/media/'  # URL to access media files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Folder to store uploaded files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
