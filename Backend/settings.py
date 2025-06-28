@@ -8,6 +8,7 @@ SECRET_KEY = 'django-insecure-g_w4o=#d6%9l34j&rjws4%o#15ebvu)df6@7t1&_*v&!a5$j#l
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
 AUTH_USER_MODEL = 'api.CustomUser'
 
 
@@ -34,6 +35,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',
     'corsheaders',
+    'django_fakegen',
+]
+
+
+AUTHENTICATION_BACKENDS = [
+    'api.backends.EmailBackend',  # your path here
+    'django.contrib.auth.backends.ModelBackend',  # keep default as fallback (optional)
 ]
 
 REST_FRAMEWORK = {

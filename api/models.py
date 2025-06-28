@@ -2,14 +2,27 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class CustomUser(AbstractUser):
+    
+    username = None
+    email = models.EmailField(unique=True)
+    name = models.CharField(max_length=100, null=False, blank=False,default='Anonymous')
+    # Additional fields
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female')], null=True, blank=True)
     height_cm = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     current_weight_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['date_of_birth', 'height_cm', 'current_weight_kg']
+
+    def __str__(self):
+        return self.email
     
 class MuscleGroup(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    
+    def __str__(self):
+        return self.name
 
 class Equipment(models.Model):
     name = models.CharField(max_length=100, unique=True)
