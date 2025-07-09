@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate
 from .models import *
 from django.db import transaction
 
+from .serializers import *
+
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -38,3 +40,24 @@ class UserLoginSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs 
+    
+
+
+class MuscleGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MuscleGroup
+        fields = '__all__'
+
+class EquipmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Equipment
+        fields = '__all__'
+
+class ExerciseSerializer(serializers.ModelSerializer):
+    muscles = serializers.SlugRelatedField(slug_field='name', queryset=MuscleGroup.objects.all(), many=True)
+    equipment = serializers.SlugRelatedField(slug_field='name', queryset=Equipment.objects.all(), many=True)
+
+    class Meta:
+        model = Exercise
+        fields = '__all__'
+        

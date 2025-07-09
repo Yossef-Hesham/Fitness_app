@@ -39,5 +39,35 @@ class UserloginView(generics.CreateAPIView):
             }, status=status.HTTP_200_OK)
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     
+    
+from rest_framework.pagination import PageNumberPagination
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+
+
+class PaginationConfig(PageNumberPagination):
+    page_size = 10  # Default number of items per page
+    page_size_query_param = 'page_size'  # Allow clients to set the page size
+    max_page_size = 100  # Maximum allowed page size
+class listExercisView(generics.ListCreateAPIView):
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
+    # pagination_class = PaginationConfig  # Disable pagination if not needed
+    # Set the number of items per page
+    
+    
+    @method_decorator(cache_page(60*15, key_prefix='equipment')) # Cache for 15 minutes
+    def list(self, request, *args, **kwargs):
+        print("Fetching exercises from the cache...")
+        return super().list(request, *args, **kwargs)
+    
+    
+    def get_queryset(self):
+        print("Fetching exercises from the database...")
+        import time
+        time.sleep(2)  # Simulate a delay for testing purposes
+        return super().get_queryset()
+
+    
 
 
